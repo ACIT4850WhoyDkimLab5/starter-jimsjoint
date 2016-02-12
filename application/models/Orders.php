@@ -16,13 +16,11 @@ class Orders extends MY_Model {
     function add_item($num, $code) {
         //method added
         $CI = & get_instance();
-        if ($CI->orderitems->exists($num, $code))
-        {
-            $record = $CI -> orderitems -> get($num, $code);
+        if ($CI->orderitems->exists($num, $code)) {
+            $record = $CI->orderitems->get($num, $code);
             $record->quantity++;
             $CI->orderitems->update($record);
-        } else
-        {
+        } else {
             $record = $CI->orderitems->create();
             $record->order = $num;
             $record->item = $code;
@@ -32,18 +30,16 @@ class Orders extends MY_Model {
     }
 
     // calculate the total for an order
-    function total($num) 
-    {
+    function total($num) {
         $CI = & get_instance();
         $items = $CI->orderitems->group($num);
         $result = 0;
         if (count($items) > 0)
-            foreach ($items as $item)
-            {
-            $menu = $CI -> menu->get($item->item);
-            $result += $item->quantity * $menu -> price;
+            foreach ($items as $item) {
+                $menu = $CI->menu->get($item->item);
+                $result += $item->quantity * $menu->price;
             }
-        return $result;     
+        return $result;
     }
 
     // retrieve the details for an order
@@ -58,18 +54,16 @@ class Orders extends MY_Model {
 
     // validate an order
     // it must have at least one item from each category
-    function validate($num)
-    {
+    function validate($num) {
         $CI = & get_instance();
         $items = $CI->orderitems->group($num);
-        
+
         $gotem = array();
         if (count($items) > 0)
-            foreach ($items as $item)
-        {
-            $menu = $CI->menu->get($item->item);
-            $gotem[$menu->category] = 1;
-        }
+            foreach ($items as $item) {
+                $menu = $CI->menu->get($item->item);
+                $gotem[$menu->category] = 1;
+            }
         return isset($gotem['m']) && isset($gotem['d']) && isset($gotem['s']);
     }
 
